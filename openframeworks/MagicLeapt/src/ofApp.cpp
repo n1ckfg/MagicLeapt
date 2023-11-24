@@ -46,11 +46,20 @@ void ofApp::setup() {
 
 void ofApp::update() {
     float pos = snd.getPositionMS() / 1000.0;
+
     if (pos > stopTimesArray[currentFrame]) {
         currentFrame++;
-        if (currentFrame >= stopTimesArray.size()) currentFrame = 0;
+        currentStroke = 0;
+        currentPoint = 0;
     }
-    std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
+    
+    if (pos > stopTimesArray[stopTimesArray.size()-1] || currentFrame >= stopTimesArray.size() - 1) {
+        currentFrame = 0;
+        currentStroke = 0;
+        currentPoint = 0;
+    }
+    
+    //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }
 
 void ofApp::draw() {
@@ -60,15 +69,26 @@ void ofApp::draw() {
     ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
     ofTranslate(40, -115);
     ofNoFill();
-    for (int i=0; i<latk.layers.size(); i++) {
-        for (int j=0; j<latk.layers[i].frames[currentFrame].strokes.size(); j++) {
-            ofBeginShape();
-            for (int k=0; k<latk.layers[i].frames[currentFrame].strokes[j].points.size(); k++) {
-                ofVec3f co = latk.layers[i].frames[currentFrame].strokes[j].points[k];
-                //cout << co << endl;
-                ofVertex(co.x, co.y, 0);
-            }
-            ofEndShape();
+    
+    for (int j=0; j<currentStroke + 1; j++) {
+        ofBeginShape();
+        
+        int kLimit = (int) latk.layers[0].frames[currentFrame].strokes[j].points.size();
+        if (j == currentStroke) kLimit = currentPoint + 1;
+
+        for (int k=0; k<kLimit; k++) {
+            ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
+            ofVertex(co.x, co.y, 0);
         }
+        ofEndShape();
+    }
+    
+    if (currentPoint < latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1) {
+        currentPoint++;
+    }
+            
+    if (currentStroke < latk.layers[0].frames[currentFrame].strokes.size() - 1 && currentPoint >= latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1) {
+        currentStroke++;
+        currentPoint = 0;
     }
 }

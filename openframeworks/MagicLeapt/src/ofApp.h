@@ -14,6 +14,7 @@ class ofApp : public ofBaseApp {
         Latk latk;
         
         int currentFrame = 0;
+        int currentStroke = 0;
         int currentPoint = 0;
         float offsetPercent = 0.8;
         
