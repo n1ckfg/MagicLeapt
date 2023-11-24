@@ -38,6 +38,7 @@ class ofApp : public ofBaseApp {
             { 63.569, 66.918 }
         };
         
+        int length = sizeof(timecodeSourceArray) / sizeof(Timecode);
         float offsetPercent = 0.8;
     
         vector<Timecode> timecodeArray;
