@@ -53,7 +53,7 @@ void ofApp::update() {
         currentPoint = 0;
     }
     
-    if (pos > stopTimesArray[stopTimesArray.size()-1] || currentFrame >= stopTimesArray.size() - 1) {
+    if (pos > stopTimesArray[stopTimesArray.size()-1] || currentFrame > stopTimesArray.size() - 1) {
         currentFrame = 0;
         currentStroke = 0;
         currentPoint = 0;
