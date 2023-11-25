@@ -83,8 +83,12 @@ void ofApp::draw() {
         ofEndShape();
     }
     
-    if (currentPoint < latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1) {
-        currentPoint++;
+    float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
+    int pointStep = int((stopTimesArray[currentFrame] - startTimesArray[currentFrame]) * 5.0);
+    
+    if (currentPoint < pointsSize) {
+        currentPoint += pointStep;
+        if (currentPoint > pointsSize) currentPoint = pointsSize;
     }
             
     if (currentStroke < latk.layers[0].frames[currentFrame].strokes.size() - 1 && currentPoint >= latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1) {
