@@ -52,6 +52,20 @@ void ofApp::setup() {
         if (newTimeDiff > largestTimeDiff) largestTimeDiff = newTimeDiff;
         diffTimesArray.push_back(newTimeDiff);
     }
+    
+    vector<ofVideoDevice> devices = vidGrabber.listDevices();
+
+    for(size_t i = 0; i < devices.size(); i++){
+        if(devices[i].bAvailable){
+            ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
+        }else{
+            ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
+        }
+    }
+
+    vidGrabber.setDeviceID(0);
+    vidGrabber.setDesiredFrameRate(30);
+    vidGrabber.initGrabber(1280, 720);
 }
 
 void ofApp::update() {
@@ -71,6 +85,11 @@ void ofApp::update() {
         currentPoint = 0;
         spread = spreadOrig;
     }
+
+    vidGrabber.update();
+    if (vidGrabber.isFrameNew()){
+            //
+    }
     
     //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }
@@ -79,11 +98,12 @@ void ofApp::draw() {
     fbo.begin();
     ofBackground(0);
     ofSetColor(255);
+    vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
     ofSetLineWidth(5);
     ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
     ofTranslate(40, -115);
     ofNoFill();
-    
+
     for (int j=0; j<currentStroke + 1; j++) {
         ofBeginShape();
         

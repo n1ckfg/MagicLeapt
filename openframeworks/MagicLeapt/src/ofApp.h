@@ -30,7 +30,9 @@ class ofApp : public ofBaseApp {
         float largestTimeDiff = 0.0;
 
         ofFbo fbo;
-    
+
+        ofVideoGrabber vidGrabber;
+
 };
 
 
