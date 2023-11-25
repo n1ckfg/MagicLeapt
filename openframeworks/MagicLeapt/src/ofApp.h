@@ -53,7 +53,7 @@ class ofApp : public ofBaseApp {
         int camExposureMode = 0; // 0 to 13, default 0
  
         int thresholdValue; // default 127
-      
+        int videoAlpha = 127;
 };
 
 

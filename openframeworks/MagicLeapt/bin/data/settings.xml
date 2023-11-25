@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
     <threshold>120</threshold>
+    <video_alpha>127</video_alpha>
     <cam_rotation>0</cam_rotation>
     <sharpness>50</sharpness>
 	<contrast>0</contrast>

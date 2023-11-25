@@ -83,6 +83,7 @@ void ofApp::setup() {
     camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
     
     thresholdValue = settings.getValue("settings:threshold", 127); 
+    videoAlpha = settings.getValue("settings:video_alpha", 127); 
 
     cam.setup(1920, 1080, 30, false); // color/gray;
     
@@ -129,7 +130,6 @@ void ofApp::update() {
 void ofApp::draw() {
     fbo.begin();
     ofBackground(0);
-    ofSetColor(255);
     
     //vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
     //gray.draw(0, 0); //, fbo.getWidth(), fbo.getHeight());
@@ -137,10 +137,12 @@ void ofApp::draw() {
 
     if (!frame.empty()) {
         //toOf(frame, gray.getPixelsRef());
+        ofSetColor(255);
         threshold(frame, frameProcessed, thresholdValue, 255, 0);
         drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
     }  
         
+    ofSetColor(255);
     ofPushMatrix();
     ofSetLineWidth(5);
     ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
