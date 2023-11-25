@@ -3,6 +3,8 @@
 void ofApp::setup() {
     ofHideCursor();
     
+    fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
+    
     latk = Latk("numbers.json");
     
     snd.load("sound.mp3");
@@ -74,6 +76,7 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
+    fbo.begin();
     ofBackground(0);
     ofSetColor(255);
     ofSetLineWidth(5);
@@ -93,12 +96,19 @@ void ofApp::draw() {
         }
         ofEndShape();
     }
+    fbo.end();
+    
+    float width = fbo.getWidth();
+    float height = fbo.getHeight();
+    ofTranslate(width / 2, height / 2);
+    ofRotateDeg(180);
+    fbo.draw(-width / 2, -height / 2);
     
     float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
     float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) / 20.0;
     int pointStep = int(pointStep_f);
     if (pointStep < 1) pointStep = 1;
-    cout << pointStep_f << ", " << pointStep << endl;
+    //cout << pointStep_f << ", " << pointStep << endl;
     
     if (currentPoint < pointsSize) {
         currentPoint += pointStep;
