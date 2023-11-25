@@ -137,7 +137,7 @@ void ofApp::draw() {
 
     if (!frame.empty()) {
         //toOf(frame, gray.getPixelsRef());
-        ofSetColor(255);
+        ofSetColor(255, video_alpha);
         threshold(frame, frameProcessed, thresholdValue, 255, 0);
         drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
     }  
