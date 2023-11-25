@@ -1,6 +1,8 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
+    ofHideCursor();
+    
     latk = Latk("numbers.json");
 
     snd.load("sound.mp3");
@@ -55,7 +57,7 @@ void ofApp::update() {
         spread = spreadOrig;
     }
     
-    if (pos > stopTimesArray[stopTimesArray.size()-1] || currentFrame > stopTimesArray.size() - 1) {
+    if (pos > stopTimesArray[int(stopTimesArray.size()) - 1] || currentFrame > int(stopTimesArray.size()) - 1) {
         currentFrame = 0;
         currentStroke = 0;
         currentPoint = 0;
@@ -97,7 +99,7 @@ void ofApp::draw() {
         if (currentPoint > pointsSize) currentPoint = pointsSize;
     }
             
-    if (currentStroke < latk.layers[0].frames[currentFrame].strokes.size() - 1 && currentPoint >= latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1) {
+    if (currentStroke < int(latk.layers[0].frames[currentFrame].strokes.size()) - 1 && currentPoint >= int(latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size()) - 1) {
         currentStroke++;
         currentPoint = 0;
     }
