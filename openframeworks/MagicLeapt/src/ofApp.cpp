@@ -1,8 +1,11 @@
 #include "ofApp.h"
 
+using namespace cv;
+using namespace ofxCv;
+
 void ofApp::setup() {
     ofHideCursor();
-    
+
     fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     
     latk = Latk("numbers.json");
@@ -53,6 +56,7 @@ void ofApp::setup() {
         diffTimesArray.push_back(newTimeDiff);
     }
     
+    /*
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
 
     for(size_t i = 0; i < devices.size(); i++){
@@ -66,6 +70,16 @@ void ofApp::setup() {
     vidGrabber.setDeviceID(0);
     vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(1280, 720);
+    */
+    cam.setup(1920, 1080, 30, false); // color/gray;
+    cam.setRotation(camRotation);
+    cam.setSharpness(camSharpness);
+    cam.setContrast(camContrast);
+    cam.setBrightness(camBrightness);
+    cam.setISO(camIso);
+    cam.setExposureMode((MMAL_PARAM_EXPOSUREMODE_T) camExposureMode);
+    cam.setExposureCompensation(camExposureCompensation);
+    cam.setShutterSpeed(camShutterSpeed);
 }
 
 void ofApp::update() {
@@ -86,19 +100,34 @@ void ofApp::update() {
         spread = spreadOrig;
     }
 
+    /*
     vidGrabber.update();
     if (vidGrabber.isFrameNew()){
             //
     }
-    
+    */
+
+    frame = cam.grab();
+  
     //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }
 
 void ofApp::draw() {
     fbo.begin();
     ofBackground(0);
+    
+    //vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
+    //gray.draw(0, 0); //, fbo.getWidth(), fbo.getHeight());
+    //drawMat(frame, 0, 0);
+
+    if (!frame.empty()) {
+        //toOf(frame, gray.getPixelsRef());
+        ofSetColor(255, 127);
+        drawMat(frame, 0, 0, fbo.getWidth(), fbo.getHeight());
+    }  
+        
     ofSetColor(255);
-    vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
+    ofPushMatrix();
     ofSetLineWidth(5);
     ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
     ofTranslate(40, -115);
@@ -116,6 +145,7 @@ void ofApp::draw() {
         }
         ofEndShape();
     }
+    ofPopMatrix();
     fbo.end();
     
     float width = fbo.getWidth();
