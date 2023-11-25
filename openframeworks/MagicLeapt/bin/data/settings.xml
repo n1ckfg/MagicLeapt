@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<settings>
+    <cam_rotation>0</cam_rotation>
+    <sharpness>50</sharpness>
+	<contrast>0</contrast>
+	<brightness>55</brightness>
+	<iso>100</iso>
+	<exposure_mode>0</exposure_mode>
+    <exposure_compensation>0</exposure_compensation>
+	<shutter_speed>100000</shutter_speed>
+</settings>

@@ -4,6 +4,7 @@
 #include "ofxLatk.h"
 #include "ofxCv.h"
 #include "ofxCvPiCam.h"
+#include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp {
     
@@ -11,6 +12,8 @@ class ofApp : public ofBaseApp {
         void setup();
         void update();
         void draw();
+        
+        ofxXmlSettings settings;
 
         ofSoundPlayer snd;
         Latk latk;

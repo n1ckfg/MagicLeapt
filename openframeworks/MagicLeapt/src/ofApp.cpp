@@ -4,6 +4,7 @@ using namespace cv;
 using namespace ofxCv;
 
 void ofApp::setup() {
+    settings.loadFile("settings.xml");
     ofHideCursor();
 
     fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
@@ -71,7 +72,18 @@ void ofApp::setup() {
     vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(1280, 720);
     */
+    
+    camRotation = settings.getValue("settings:cam_rotation", 0); 
+    camSharpness = settings.getValue("settings:sharpness", 0); 
+    camContrast = settings.getValue("settings:contrast", 0); 
+    camBrightness = settings.getValue("settings:brightness", 50); 
+    camIso = settings.getValue("settings:iso", 300); 
+    camExposureMode = settings.getValue("settings:exposure_mode", 0); 
+    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0); 
+    camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
+    
     cam.setup(1920, 1080, 30, false); // color/gray;
+    
     cam.setRotation(camRotation);
     cam.setSharpness(camSharpness);
     cam.setContrast(camContrast);
