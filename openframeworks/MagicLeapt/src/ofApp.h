@@ -16,8 +16,14 @@ class ofApp : public ofBaseApp {
         int currentFrame = 0;
         int currentStroke = 0;
         int currentPoint = 0;
-        float offsetPercent = 0.8;
         
+        float minPointStep = 0.1;
+        float maxPointStep = 0.5;
+    
+        float spreadOrig = 0.05;
+        float spreadDelta = 0.0005;
+        float spread = spreadOrig;
+
         vector<float> startTimesArray;
         vector<float> stopTimesArray;
 

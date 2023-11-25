@@ -1,7 +1,7 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
-    latk = Latk("untitled.json");
+    latk = Latk("numbers.json");
 
     snd.load("sound.mp3");
     snd.setLoop(true);
@@ -46,17 +46,20 @@ void ofApp::setup() {
 
 void ofApp::update() {
     float pos = snd.getPositionMS() / 1000.0;
-
+    spread += spreadDelta;
+    
     if (pos > stopTimesArray[currentFrame]) {
         currentFrame++;
         currentStroke = 0;
         currentPoint = 0;
+        spread = spreadOrig;
     }
     
     if (pos > stopTimesArray[stopTimesArray.size()-1] || currentFrame > stopTimesArray.size() - 1) {
         currentFrame = 0;
         currentStroke = 0;
         currentPoint = 0;
+        spread = spreadOrig;
     }
     
     //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
@@ -78,13 +81,16 @@ void ofApp::draw() {
 
         for (int k=0; k<kLimit; k++) {
             ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
-            ofVertex(co.x, co.y, 0);
+            ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
         }
         ofEndShape();
     }
     
     float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
-    int pointStep = int((stopTimesArray[currentFrame] - startTimesArray[currentFrame]) * 5.0);
+    float timeDiff = abs(stopTimesArray[currentFrame] - startTimesArray[currentFrame]);
+    int pointStep = int(ofLerp(minPointStep, maxPointStep, timeDiff));
+    if (pointStep < 1) pointStep = 1;
+    cout << pointStep << endl;
     
     if (currentPoint < pointsSize) {
         currentPoint += pointStep;
