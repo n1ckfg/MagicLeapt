@@ -85,7 +85,7 @@ void ofApp::setup() {
     thresholdValue = settings.getValue("settings:threshold", 127); 
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
 
-    cam.setup(1920, 1080, 30, false); // color/gray;
+    cam.setup(320, 240, 40, false); // color/gray;
     
     cam.setRotation(camRotation);
     cam.setSharpness(camSharpness);
