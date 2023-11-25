@@ -21,11 +21,13 @@ class ofApp : public ofBaseApp {
         float maxPointStep = 0.5;
     
         float spreadOrig = 0.05;
-        float spreadDelta = 0.0005;
+        float spreadDelta = 0.001;
         float spread = spreadOrig;
 
         vector<float> startTimesArray;
         vector<float> stopTimesArray;
+        vector<float> diffTimesArray;
+        float largestTimeDiff = 0.0;
 
 };
 

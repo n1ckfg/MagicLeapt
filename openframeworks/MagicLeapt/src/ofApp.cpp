@@ -4,7 +4,7 @@ void ofApp::setup() {
     ofHideCursor();
     
     latk = Latk("numbers.json");
-
+    
     snd.load("sound.mp3");
     snd.setLoop(true);
     snd.play();
@@ -44,6 +44,12 @@ void ofApp::setup() {
     stopTimesArray.push_back(56.442);
     stopTimesArray.push_back(62.357);
     stopTimesArray.push_back(66.918);
+    
+    for (int i=0; i<startTimesArray.size(); i++) {
+        float newTimeDiff = abs(stopTimesArray[currentFrame] - startTimesArray[currentFrame]);
+        if (newTimeDiff > largestTimeDiff) largestTimeDiff = newTimeDiff;
+        diffTimesArray.push_back(newTimeDiff);
+    }
 }
 
 void ofApp::update() {
@@ -89,10 +95,10 @@ void ofApp::draw() {
     }
     
     float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
-    float timeDiff = abs(stopTimesArray[currentFrame] - startTimesArray[currentFrame]);
-    int pointStep = int(ofLerp(minPointStep, maxPointStep, timeDiff));
+    float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) / 20.0;
+    int pointStep = int(pointStep_f);
     if (pointStep < 1) pointStep = 1;
-    cout << pointStep << endl;
+    cout << pointStep_f << ", " << pointStep << endl;
     
     if (currentPoint < pointsSize) {
         currentPoint += pointStep;
