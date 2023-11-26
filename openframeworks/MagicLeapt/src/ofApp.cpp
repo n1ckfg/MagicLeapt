@@ -87,7 +87,7 @@ void ofApp::setup() {
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
     pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
     translateXorig = settings.getValue("settings:translate_x", 40.0);
-    translateYorig = settings.getValue("settings:translate_Y", -115.0);
+    translateYorig = settings.getValue("settings:translate_y", -115.0);
     randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
 
     cam.setup(320, 240, 40, false); // color/gray;
