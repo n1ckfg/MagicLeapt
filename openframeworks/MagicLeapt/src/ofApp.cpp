@@ -86,6 +86,9 @@ void ofApp::setup() {
     thresholdValue = settings.getValue("settings:threshold", 127); 
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
     pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
+    translateXorig = settings.getValue("settings:translate_x", 40.0);
+    translateYorig = settings.getValue("settings:translate_Y", -115.0);
+    randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
 
     cam.setup(320, 240, 40, false); // color/gray;
     
@@ -99,6 +102,11 @@ void ofApp::setup() {
     cam.setShutterSpeed(camShutterSpeed);
 }
 
+void ofApp::randomizePosition() {
+    translateX = translateXorig + ofRandom(-randomPositionSpread, randomPositionSpread);
+    translateY = translateYorig + ofRandom(-randomPositionSpread, randomPositionSpread);
+}
+
 void ofApp::update() {
     float pos = snd.getPositionMS() / 1000.0;
     spread += spreadDelta;
@@ -108,6 +116,7 @@ void ofApp::update() {
         currentStroke = 0;
         currentPoint = 0;
         spread = spreadOrig;
+        randomizePosition();
     }
     
     if (pos > stopTimesArray[int(stopTimesArray.size()) - 1] || currentFrame > int(stopTimesArray.size()) - 1) {
@@ -115,6 +124,7 @@ void ofApp::update() {
         currentStroke = 0;
         currentPoint = 0;
         spread = spreadOrig;
+        randomizePosition();
     }
 
     /*
@@ -148,7 +158,7 @@ void ofApp::draw() {
     ofPushMatrix();
     ofSetLineWidth(5);
     ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
-    ofTranslate(40, -115);
+    ofTranslate(translateX, translateY);
     ofNoFill();
 
     for (int j=0; j<currentStroke + 1; j++) {

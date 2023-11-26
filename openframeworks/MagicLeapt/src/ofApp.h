@@ -12,6 +12,7 @@ class ofApp : public ofBaseApp {
         void setup();
         void update();
         void draw();
+        void randomizePosition();
         
         ofxXmlSettings settings;
 
@@ -32,9 +33,9 @@ class ofApp : public ofBaseApp {
         vector<float> stopTimesArray;
         vector<float> diffTimesArray;
         float largestTimeDiff = 0.0;
-
+        float randomPositionSpread;
         string fileName = "untitled.json";
-
+        float translateXorig, translateYorig, translateX, translateY;
         ofFbo fbo;
 
         //ofVideoGrabber vidGrabber;
