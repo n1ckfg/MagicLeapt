@@ -15,23 +15,23 @@ void ofApp::setup() {
     snd.setLoop(true);
     snd.play();
     
-    startTimesArray.push_back(0.641);
-    startTimesArray.push_back(5.986);
-    startTimesArray.push_back(8.053);
-    startTimesArray.push_back(11.758);
-    startTimesArray.push_back(15.322);
-    startTimesArray.push_back(19.241);
-    startTimesArray.push_back(23.446);
-    startTimesArray.push_back(26.225);
-    startTimesArray.push_back(30.573);
-    startTimesArray.push_back(33.637);
-    startTimesArray.push_back(36.488);
-    startTimesArray.push_back(38.982);
-    startTimesArray.push_back(45.040);
-    startTimesArray.push_back(49.886);
-    startTimesArray.push_back(53.734);
-    startTimesArray.push_back(57.226);
-    startTimesArray.push_back(63.569);
+    startTimesArray.push_back(0.641); // 1. This place is a message, and part of a system of messages.
+    startTimesArray.push_back(5.986); // 2. Pay attention to it!
+    startTimesArray.push_back(8.053); // 3. Sending this message was important to us.
+    startTimesArray.push_back(11.758); // 4. We considered ourselves to be a powerful culture.
+    startTimesArray.push_back(15.322); // 5. This place is not a place of honor.
+    startTimesArray.push_back(19.241); // 6. No highly esteemed deed is commemorated here.
+    startTimesArray.push_back(23.446); // 7. Nothing valued is here.
+    startTimesArray.push_back(26.225); // 8. What is here was dangerous and repulsive to us.
+    startTimesArray.push_back(30.573); // 9. This message is a warning about danger.
+    startTimesArray.push_back(33.637); // 10. The danger is in a particular location.
+    startTimesArray.push_back(36.488); // 11. It increases towards a center.
+    startTimesArray.push_back(38.982); // 12. The center of danger is here, of a particular size and shape, and below us.
+    startTimesArray.push_back(45.040); // 13. The danger is still present, in your time, as it was in ours.
+    startTimesArray.push_back(49.886); // 14. The danger is to the body, and it can kill.
+    startTimesArray.push_back(53.734); // 15. The form of the danger is an emanation of energy.
+    startTimesArray.push_back(57.226); // 16. The danger is unleashed only if you substantially disturb this place physically.
+    startTimesArray.push_back(63.569); // 17. This place is best shunned and left uninhabited.
     
     stopTimesArray.push_back(5.487);
     stopTimesArray.push_back(7.340);
