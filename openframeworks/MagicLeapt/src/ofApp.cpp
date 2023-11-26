@@ -9,7 +9,8 @@ void ofApp::setup() {
 
     fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     
-    latk = Latk("numbers.json");
+    fileName = settings.getValue("settings:file_name", "untitled.json"); 
+    latk = Latk(fileName);
     
     snd.load("sound.mp3");
     snd.setLoop(true);

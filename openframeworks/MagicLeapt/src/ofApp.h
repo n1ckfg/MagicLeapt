@@ -34,6 +34,8 @@ class ofApp : public ofBaseApp {
         vector<float> diffTimesArray;
         float largestTimeDiff = 0.0;
 
+        string fileName = "untitled.json";
+
         ofFbo fbo;
 
         //ofVideoGrabber vidGrabber;
