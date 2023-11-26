@@ -85,6 +85,7 @@ void ofApp::setup() {
     
     thresholdValue = settings.getValue("settings:threshold", 127); 
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
+    pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
 
     cam.setup(320, 240, 40, false); // color/gray;
     
@@ -172,7 +173,7 @@ void ofApp::draw() {
     fbo.draw(-width / 2, -height / 2);
     
     float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
-    float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) / 20.0;
+    float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) * pointReadMultiplier;
     int pointStep = int(pointStep_f);
     if (pointStep < 1) pointStep = 1;
     //cout << pointStep_f << ", " << pointStep << endl;

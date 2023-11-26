@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
 	<file_name>numbers.json</file_name>
+	<point_read_multiplier>0.1</point_read_multiplier>
     <threshold>120</threshold>
     <video_alpha>77</video_alpha>
     <cam_rotation>270</cam_rotation>

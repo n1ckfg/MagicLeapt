@@ -22,8 +22,7 @@ class ofApp : public ofBaseApp {
         int currentStroke = 0;
         int currentPoint = 0;
         
-        float minPointStep = 0.1;
-        float maxPointStep = 0.5;
+        float pointReadMultiplier = 1.0;
     
         float spreadOrig = 0.05;
         float spreadDelta = 0.001;
