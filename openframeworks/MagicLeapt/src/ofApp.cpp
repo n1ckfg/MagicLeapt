@@ -1,7 +1,9 @@
 #include "ofApp.h"
 
+#ifdef TARGET_RASPBERRY_PI
 using namespace cv;
 using namespace ofxCv;
+#endif
 
 void ofApp::setup() {
     settings.loadFile("settings.xml");
@@ -58,7 +60,27 @@ void ofApp::setup() {
         diffTimesArray.push_back(newTimeDiff);
     }
     
-    /*
+#ifdef TARGET_RASPBERRY_PI
+    camRotation = settings.getValue("settings:cam_rotation", 0);
+    camSharpness = settings.getValue("settings:sharpness", 0); 
+    camContrast = settings.getValue("settings:contrast", 0); 
+    camBrightness = settings.getValue("settings:brightness", 50); 
+    camIso = settings.getValue("settings:iso", 300); 
+    camExposureMode = settings.getValue("settings:exposure_mode", 0); 
+    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0); 
+    camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
+
+    cam.setup(320, 240, 40, false); // color/gray;
+    
+    cam.setRotation(camRotation);
+    cam.setSharpness(camSharpness);
+    cam.setContrast(camContrast);
+    cam.setBrightness(camBrightness);
+    cam.setISO(camIso);
+    cam.setExposureMode((MMAL_PARAM_EXPOSUREMODE_T) camExposureMode);
+    cam.setExposureCompensation(camExposureCompensation);
+    cam.setShutterSpeed(camShutterSpeed);
+#else
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
 
     for(size_t i = 0; i < devices.size(); i++){
@@ -72,34 +94,14 @@ void ofApp::setup() {
     vidGrabber.setDeviceID(0);
     vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(1280, 720);
-    */
+#endif
     
-    camRotation = settings.getValue("settings:cam_rotation", 0); 
-    camSharpness = settings.getValue("settings:sharpness", 0); 
-    camContrast = settings.getValue("settings:contrast", 0); 
-    camBrightness = settings.getValue("settings:brightness", 50); 
-    camIso = settings.getValue("settings:iso", 300); 
-    camExposureMode = settings.getValue("settings:exposure_mode", 0); 
-    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0); 
-    camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
-    
-    thresholdValue = settings.getValue("settings:threshold", 127); 
+    thresholdValue = settings.getValue("settings:threshold", 127);
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
     pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
     translateXorig = settings.getValue("settings:translate_x", 40.0);
     translateYorig = settings.getValue("settings:translate_y", -115.0);
     randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
-
-    cam.setup(320, 240, 40, false); // color/gray;
-    
-    cam.setRotation(camRotation);
-    cam.setSharpness(camSharpness);
-    cam.setContrast(camContrast);
-    cam.setBrightness(camBrightness);
-    cam.setISO(camIso);
-    cam.setExposureMode((MMAL_PARAM_EXPOSUREMODE_T) camExposureMode);
-    cam.setExposureCompensation(camExposureCompensation);
-    cam.setShutterSpeed(camShutterSpeed);
 }
 
 void ofApp::randomizePosition() {
@@ -109,13 +111,13 @@ void ofApp::randomizePosition() {
 
 void ofApp::update() {
     float pos = snd.getPositionMS() / 1000.0;
-    spread += spreadDelta;
+    //spread += spreadDelta;
     
     if (pos > stopTimesArray[currentFrame]) {
         currentFrame++;
         currentStroke = 0;
         currentPoint = 0;
-        spread = spreadOrig;
+        //spread = spreadOrig;
         randomizePosition();
     }
     
@@ -123,19 +125,19 @@ void ofApp::update() {
         currentFrame = 0;
         currentStroke = 0;
         currentPoint = 0;
-        spread = spreadOrig;
+        //spread = spreadOrig;
         randomizePosition();
     }
 
-    /*
+#ifdef TARGET_RASPBERRY_PI
+    frame = cam.grab();
+#else
     vidGrabber.update();
     if (vidGrabber.isFrameNew()){
             //
     }
-    */
-
-    frame = cam.grab();
-  
+#endif
+    
     //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }
 
@@ -143,17 +145,18 @@ void ofApp::draw() {
     fbo.begin();
     ofBackground(0);
     
-    //vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
-    //gray.draw(0, 0); //, fbo.getWidth(), fbo.getHeight());
-    //drawMat(frame, 0, 0);
-
+#ifdef TARGET_RASPBERRY_PI
     if (!frame.empty()) {
         //toOf(frame, gray.getPixelsRef());
         ofSetColor(255, videoAlpha);
         threshold(frame, frameProcessed, thresholdValue, 255, 0);
         drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
     }  
-        
+#else
+    ofSetColor(255, videoAlpha);
+    vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
+#endif
+    
     ofSetColor(255);
     ofPushMatrix();
     ofSetLineWidth(5);
@@ -169,7 +172,8 @@ void ofApp::draw() {
 
         for (int k=0; k<kLimit; k++) {
             ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
-            ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
+            //ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
+            ofVertex(co.x, co.y, 0);
         }
         ofEndShape();
     }

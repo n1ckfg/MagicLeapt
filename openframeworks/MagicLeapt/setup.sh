@@ -1,6 +1,5 @@
-sudo apt-get update
-
-sudo apt-get install -y xvfb
+#sudo apt-get update
+#sudo apt-get install -y xvfb
 
 DIR=$PWD
 
