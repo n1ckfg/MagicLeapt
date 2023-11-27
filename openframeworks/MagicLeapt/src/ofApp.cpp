@@ -95,6 +95,11 @@ void ofApp::setup() {
     vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(1280, 720);
 #endif
+
+    lineWidth = settings.getValue("settings:line_width", 10);
+    alphaVal = settings.getValue("settings:alpha_val", 255);
+    contourSlices = settings.getValue("settings:contour_slices", 10);
+    drawWireframe = (bool) settings.getValue("settings:draw_wireframe", 0);
     
     thresholdValue = settings.getValue("settings:threshold", 127);
     videoAlpha = settings.getValue("settings:video_alpha", 127); 
@@ -137,6 +142,12 @@ void ofApp::update() {
             //
     }
 #endif
+    
+    contourThreshold = 2.0;
+    contourMinAreaRadius = 1.0;
+    contourMaxAreaRadius = 250.0;
+    contourFinder.setMinAreaRadius(contourMinAreaRadius);
+    contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
     
     //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }

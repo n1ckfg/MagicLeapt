@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
 	<file_name>sandia.json</file_name>
+    <!-- * -->
 	<point_read_multiplier>1.0</point_read_multiplier>
     <translate_x>0.0</translate_x>
     <translate_y>-100.0</translate_y>
     <random_position_spread>10.0</random_position_spread>
+    <!-- * -->
+    <line_width>2</line_width>
+    <alpha_val>127</alpha_val>
+    <draw_wireframe>1</draw_wireframe>
+    <video_color>0</video_color>
+    <contour_slices>10</contour_slices>
+    <!-- * -->
     <threshold>120</threshold>
     <video_alpha>77</video_alpha>
     <cam_rotation>270</cam_rotation>
