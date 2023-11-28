@@ -65,14 +65,12 @@ class ofApp : public ofBaseApp {
         int videoDevice = 0;
 #endif
         
-        int thresholdValue; // default 127
-        int videoAlpha = 127;
-
-        int alphaVal;
-        float lineWidth;
+        int alphaVal = 127;
+        int lineWidth = 10;
+        float contourLineWidth;
+        int contourAlpha = 127;
         bool drawWireframe;
         ofxCv::ContourFinder contourFinder;
-        float contourThreshold;  // default 127
         float contourMinAreaRadius; // default 10
         float contourMaxAreaRadius; // default 150
         int contourSlices; // default 20

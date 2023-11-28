@@ -105,19 +105,17 @@ void ofApp::setup() {
     vidGrabber.initGrabber(camW, camH);
 #endif
     
+    contourLineWidth = settings.getValue("settings:contour_line_width", 10);
     lineWidth = settings.getValue("settings:line_width", 10);
     alphaVal = settings.getValue("settings:alpha_val", 255);
     contourSlices = settings.getValue("settings:contour_slices", 10);
-    drawWireframe = (bool) settings.getValue("settings:draw_wireframe", 0);
     
-    thresholdValue = settings.getValue("settings:threshold", 127);
-    videoAlpha = settings.getValue("settings:video_alpha", 127);
+    contourAlpha = settings.getValue("settings:contour_alpha", 127);
     pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
     translateXorig = settings.getValue("settings:translate_x", 40.0);
     translateYorig = settings.getValue("settings:translate_y", -115.0);
     randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
        
-    contourThreshold = settings.getValue("settings:contour_threshold", 127.0);
     contourMinAreaRadius = settings.getValue("settings:contour_min_radius", 10.0);
     contourMaxAreaRadius = settings.getValue("settings:contour_max_radius", 150.0);
     contourFinder.setMinAreaRadius(contourMinAreaRadius);
@@ -166,9 +164,8 @@ void ofApp::draw() {
     ofBackground(0);
 
     if (!frame.empty()) {
-        ofSetColor(255, videoAlpha);
-        threshold(frame, frameProcessed, thresholdValue, 255, 0);
-        drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
+        //threshold(frame, frameProcessed, thresholdValue, 255, 0);
+        //drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
         
         int contourCounter = 0;
         //unsigned char * pixels = gray.getPixels().getData();
@@ -213,7 +210,7 @@ void ofApp::draw() {
                     
                     float dist = diff.length();
                     
-                    float w = ofMap(dist, 0, 20, lineWidth, 2, true); //40, 2, true);
+                    float w = ofMap(dist, 0, 20, contourLineWidth, 2, true); //40, 2, true);
                     
                     widthSmooth = 0.9f * widthSmooth + 0.1f * w;
                     
@@ -234,11 +231,12 @@ void ofApp::draw() {
                 }
                 
                 //ofSetColor(col, alphaVal);
+                ofSetColor(255, contourAlpha);
                 mesh.draw();
-                if (drawWireframe) {
+                //if (drawWireframe) {
                     //ofSetColor(col);
-                    mesh.drawWireframe();
-                }
+                    //mesh.drawWireframe();
+                //}
                 
                 contourCounter++;
             }
@@ -247,9 +245,9 @@ void ofApp::draw() {
     
     // latk lines
     if (playLatk) {
-        ofSetColor(255);
+        ofSetColor(255, alphaVal);
         ofPushMatrix();
-        ofSetLineWidth(5);
+        ofSetLineWidth(lineWidth);
         ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
         ofTranslate(translateX, translateY);
         ofNoFill();
