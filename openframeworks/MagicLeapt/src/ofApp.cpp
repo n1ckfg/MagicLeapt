@@ -217,6 +217,14 @@ void ofApp::draw() {
                     offset.x = cos(angleSmooth + PI/2) * widthSmooth;
                     offset.y = sin(angleSmooth + PI/2) * widthSmooth;
                     
+                    float frW = frame.size().width;
+                    float fbW = fbo.getWidth();
+                    float frH = frame.size().height;
+                    float fbH = fbo.getHeight();
+                    if (frW != fbW || frH != fbH) {
+                        cvPoints[i].x = (cvPoints[i].x / frW) * fbW;
+                        cvPoints[i].y = (cvPoints[i].y / frH) * fbH;
+                    }
                     mesh.addVertex(cvPoints[i] + offset);
                     mesh.addVertex(cvPoints[i] - offset);
                 }
