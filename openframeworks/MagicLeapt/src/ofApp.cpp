@@ -1,22 +1,26 @@
 #include "ofApp.h"
 
-#ifdef TARGET_RASPBERRY_PI
 using namespace cv;
 using namespace ofxCv;
-#endif
 
 void ofApp::setup() {
     settings.loadFile("settings.xml");
     ofHideCursor();
-
+    
     fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     
-    fileName = settings.getValue("settings:file_name", "untitled.json"); 
-    latk = Latk(fileName);
-    
-    snd.load("sound.mp3");
-    snd.setLoop(true);
-    snd.play();
+    playLatk = (bool) settings.getValue("settings:play_latk", 1);
+    fboRotation = settings.getValue("settings:fbo_rotation", 180);
+
+    if (playLatk) {
+        latkFileName = settings.getValue("settings:latk_file_name", "untitled.json");
+        soundFileName = settings.getValue("settings:sound_file_name", "sound.mp3");
+        latk = Latk(latkFileName);
+        
+        snd.load(soundFileName);
+        snd.setLoop(true);
+        snd.play();
+    }
     
     startTimesArray.push_back(0.641); // 1. This place is a message, and part of a system of messages.
     startTimesArray.push_back(5.986); // 2. Pay attention to it!
@@ -62,14 +66,14 @@ void ofApp::setup() {
     
 #ifdef TARGET_RASPBERRY_PI
     camRotation = settings.getValue("settings:cam_rotation", 0);
-    camSharpness = settings.getValue("settings:sharpness", 0); 
-    camContrast = settings.getValue("settings:contrast", 0); 
-    camBrightness = settings.getValue("settings:brightness", 50); 
-    camIso = settings.getValue("settings:iso", 300); 
-    camExposureMode = settings.getValue("settings:exposure_mode", 0); 
-    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0); 
+    camSharpness = settings.getValue("settings:sharpness", 0);
+    camContrast = settings.getValue("settings:contrast", 0);
+    camBrightness = settings.getValue("settings:brightness", 50);
+    camIso = settings.getValue("settings:iso", 300);
+    camExposureMode = settings.getValue("settings:exposure_mode", 0);
+    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0);
     camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
-
+    
     cam.setup(320, 240, 40, false); // color/gray;
     
     cam.setRotation(camRotation);
@@ -82,7 +86,7 @@ void ofApp::setup() {
     cam.setShutterSpeed(camShutterSpeed);
 #else
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
-
+    
     for(size_t i = 0; i < devices.size(); i++){
         if(devices[i].bAvailable){
             ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
@@ -90,23 +94,30 @@ void ofApp::setup() {
             ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
         }
     }
-
-    vidGrabber.setDeviceID(0);
+    
+    videoDevice = settings.getValue("settings:video_device", 0);
+    vidGrabber.setDeviceID(videoDevice);
     vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(1280, 720);
 #endif
-
+    
     lineWidth = settings.getValue("settings:line_width", 10);
     alphaVal = settings.getValue("settings:alpha_val", 255);
     contourSlices = settings.getValue("settings:contour_slices", 10);
     drawWireframe = (bool) settings.getValue("settings:draw_wireframe", 0);
     
     thresholdValue = settings.getValue("settings:threshold", 127);
-    videoAlpha = settings.getValue("settings:video_alpha", 127); 
+    videoAlpha = settings.getValue("settings:video_alpha", 127);
     pointReadMultiplier = settings.getValue("settings:point_read_multiplier", 1.0);
     translateXorig = settings.getValue("settings:translate_x", 40.0);
     translateYorig = settings.getValue("settings:translate_y", -115.0);
     randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
+       
+    contourThreshold = 2.0;
+    contourMinAreaRadius = 1.0;
+    contourMaxAreaRadius = 250.0;
+    contourFinder.setMinAreaRadius(contourMinAreaRadius);
+    contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
 }
 
 void ofApp::randomizePosition() {
@@ -115,101 +126,164 @@ void ofApp::randomizePosition() {
 }
 
 void ofApp::update() {
-    float pos = snd.getPositionMS() / 1000.0;
-    //spread += spreadDelta;
-    
-    if (pos > stopTimesArray[currentFrame]) {
-        currentFrame++;
-        currentStroke = 0;
-        currentPoint = 0;
-        //spread = spreadOrig;
-        randomizePosition();
-    }
-    
-    if (pos > stopTimesArray[int(stopTimesArray.size()) - 1] || currentFrame > int(stopTimesArray.size()) - 1) {
-        currentFrame = 0;
-        currentStroke = 0;
-        currentPoint = 0;
-        //spread = spreadOrig;
-        randomizePosition();
+    if (playLatk) {
+        float pos = snd.getPositionMS() / 1000.0;
+        //spread += spreadDelta;
+        
+        if (pos > stopTimesArray[currentFrame]) {
+            currentFrame++;
+            currentStroke = 0;
+            currentPoint = 0;
+            spread = spreadOrig;
+            randomizePosition();
+        }
+        
+        if (pos > stopTimesArray[int(stopTimesArray.size()) - 1] || currentFrame > int(stopTimesArray.size()) - 1) {
+            currentFrame = 0;
+            currentStroke = 0;
+            currentPoint = 0;
+            spread = spreadOrig;
+            randomizePosition();
+        }
     }
 
 #ifdef TARGET_RASPBERRY_PI
     frame = cam.grab();
 #else
     vidGrabber.update();
-    if (vidGrabber.isFrameNew()){
-            //
+    if (vidGrabber.isFrameNew()) {
+        frame = toCv(vidGrabber.getPixelsRef());
     }
 #endif
-    
-    contourThreshold = 2.0;
-    contourMinAreaRadius = 1.0;
-    contourMaxAreaRadius = 250.0;
-    contourFinder.setMinAreaRadius(contourMinAreaRadius);
-    contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
-    
-    //std:cout << pos << ", " << stopTimesArray[currentFrame] << endl;
 }
 
 void ofApp::draw() {
     fbo.begin();
     ofBackground(0);
-    
-#ifdef TARGET_RASPBERRY_PI
+
     if (!frame.empty()) {
-        //toOf(frame, gray.getPixelsRef());
         ofSetColor(255, videoAlpha);
         threshold(frame, frameProcessed, thresholdValue, 255, 0);
         drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
-    }  
-#else
-    ofSetColor(255, videoAlpha);
-    vidGrabber.draw(0, 0, fbo.getWidth(), fbo.getHeight());
-#endif
-    
-    ofSetColor(255);
-    ofPushMatrix();
-    ofSetLineWidth(5);
-    ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
-    ofTranslate(translateX, translateY);
-    ofNoFill();
-
-    for (int j=0; j<currentStroke + 1; j++) {
-        ofBeginShape();
         
-        int kLimit = (int) latk.layers[0].frames[currentFrame].strokes[j].points.size();
-        if (j == currentStroke) kLimit = currentPoint + 1;
-
-        for (int k=0; k<kLimit; k++) {
-            ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
-            //ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
-            ofVertex(co.x, co.y, 0);
+        int contourCounter = 0;
+        //unsigned char * pixels = gray.getPixels().getData();
+        //int gw = gray.getWidth();
+        
+        for (int h=0; h<255; h += int(255/contourSlices)) {
+            contourFinder.setThreshold(h);
+            contourFinder.findContours(frame);
+            //contourFinder.draw();
+            
+            int n = contourFinder.size();
+            for (int h = 0; h < n; h++) {
+                ofPolyline line = contourFinder.getPolyline(h);
+                vector<glm::vec3> cvPoints = line.getVertices();
+                
+                //int index = cvPoints.size() / 2;
+                //int x = int(cvPoints[index].x);
+                //int y = int(cvPoints[index].y);
+                //ofColor col = pixels[x + y * gw];
+                
+                ofMesh mesh;
+                mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+                
+                float widthSmooth = 10;
+                float angleSmooth;
+                
+                int cvPointsSize = int(cvPoints.size());
+                for (int i = 0; i < cvPointsSize; i++) {
+                    int me_m_one = i - 1;
+                    int me_p_one = i + 1;
+                    if (me_m_one < 0) me_m_one = 0;
+                    if (me_p_one == cvPointsSize) me_p_one = cvPointsSize - 1;
+                    
+                    ofPoint diff = cvPoints[me_p_one] - cvPoints[me_m_one];
+                    float angle = atan2(diff.y, diff.x);
+                    
+                    if (i == 0) {
+                        angleSmooth = angle;
+                    } else {
+                        angleSmooth = ofLerpDegrees(angleSmooth, angle, 1.0);
+                    }
+                    
+                    float dist = diff.length();
+                    
+                    float w = ofMap(dist, 0, 20, lineWidth, 2, true); //40, 2, true);
+                    
+                    widthSmooth = 0.9f * widthSmooth + 0.1f * w;
+                    
+                    ofPoint offset;
+                    offset.x = cos(angleSmooth + PI/2) * widthSmooth;
+                    offset.y = sin(angleSmooth + PI/2) * widthSmooth;
+                    
+                    mesh.addVertex(cvPoints[i] + offset);
+                    mesh.addVertex(cvPoints[i] - offset);
+                }
+                
+                //ofSetColor(col, alphaVal);
+                mesh.draw();
+                if (drawWireframe) {
+                    //ofSetColor(col);
+                    mesh.drawWireframe();
+                }
+                
+                contourCounter++;
+            }
         }
-        ofEndShape();
     }
-    ofPopMatrix();
-    fbo.end();
     
+    // latk lines
+    if (playLatk) {
+        ofSetColor(255);
+        ofPushMatrix();
+        ofSetLineWidth(5);
+        ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
+        ofTranslate(translateX, translateY);
+        ofNoFill();
+        
+        for (int j=0; j<currentStroke + 1; j++) {
+            ofBeginShape();
+            
+            int kLimit = (int) latk.layers[0].frames[currentFrame].strokes[j].points.size();
+            if (j == currentStroke) kLimit = currentPoint + 1;
+            
+            for (int k=0; k<kLimit; k++) {
+                ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
+                if (doSpread) {
+                    ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
+                } else {
+                    ofVertex(co.x, co.y, 0);
+                }
+            }
+            ofEndShape();
+        }
+        ofPopMatrix();
+    }
+    
+    fbo.end();
+        
     float width = fbo.getWidth();
     float height = fbo.getHeight();
     ofTranslate(width / 2, height / 2);
-    ofRotateDeg(180);
+    ofRotateDeg(fboRotation);
     fbo.draw(-width / 2, -height / 2);
     
-    float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
-    float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) * pointReadMultiplier;
-    int pointStep = int(pointStep_f);
-    if (pointStep < 1) pointStep = 1;
-    //cout << pointStep_f << ", " << pointStep << endl;
-    
-    if (currentPoint < pointsSize) {
-        currentPoint += pointStep;
-        if (currentPoint > pointsSize) currentPoint = pointsSize;
-    }
-            
-    if (currentStroke < int(latk.layers[0].frames[currentFrame].strokes.size()) - 1 && currentPoint >= int(latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size()) - 1) {
-        currentStroke++;
-        currentPoint = 0;
+    if (playLatk) {
+        float pointsSize = latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size() - 1;
+        float pointStep_f = ofMap(abs(largestTimeDiff - diffTimesArray[currentFrame]), 0.0, largestTimeDiff, pointsSize, 1.0) * pointReadMultiplier;
+        int pointStep = int(pointStep_f);
+        if (pointStep < 1) pointStep = 1;
+        //cout << pointStep_f << ", " << pointStep << endl;
+        
+        if (currentPoint < pointsSize) {
+            currentPoint += pointStep;
+            if (currentPoint > pointsSize) currentPoint = pointsSize;
+        }
+        
+        if (currentStroke < int(latk.layers[0].frames[currentFrame].strokes.size()) - 1 && currentPoint >= int(latk.layers[0].frames[currentFrame].strokes[currentStroke].points.size()) - 1) {
+            currentStroke++;
+            currentPoint = 0;
+        }
     }
 }

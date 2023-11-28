@@ -29,22 +29,25 @@ class ofApp : public ofBaseApp {
         
         float pointReadMultiplier = 1.0;
         
-        //float spreadOrig = 0.05;
-        //float spreadDelta = 0.001;
-        //float spread = spreadOrig;
-        
+        float spreadOrig = 0.05;
+        float spreadDelta = 0.001;
+        float spread = spreadOrig;
+        bool doSpread = false;
+    
         vector<float> startTimesArray;
         vector<float> stopTimesArray;
         vector<float> diffTimesArray;
         float largestTimeDiff = 0.0;
         float randomPositionSpread;
-        string fileName = "untitled.json";
+        string latkFileName = "untitled.json";
+        string soundFileName = "sound.mp3";
         float translateXorig, translateYorig, translateX, translateY;
         ofFbo fbo;
-        
+
+        cv::Mat frame, frameProcessed;
+
 #ifdef TARGET_RASPBERRY_PI
         ofxCvPiCam cam;
-        cv::Mat frame, frameProcessed;
         
         // for more camera settings, see:
         // https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp
@@ -59,6 +62,7 @@ class ofApp : public ofBaseApp {
         int camExposureMode = 0; // 0 to 13, default 0
 #else
         ofVideoGrabber vidGrabber;
+        int videoDevice = 0;
 #endif
         
         int thresholdValue; // default 127
@@ -73,6 +77,9 @@ class ofApp : public ofBaseApp {
         float contourMaxAreaRadius; // default 150
         int contourSlices; // default 20
         ofxCv::TrackingColorMode trackingColorMode; // RGB, HSV, H, HS; default RGB
+    
+        bool playLatk = true;
+        float fboRotation = 180;
     
 };
 

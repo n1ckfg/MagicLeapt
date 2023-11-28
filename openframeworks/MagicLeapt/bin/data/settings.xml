@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
-	<file_name>sandia.json</file_name>
+    <play_latk>1</play_latk>
+    <latk_file_name>sandia.json</latk_file_name>
+    <sound_file_name>sound.mp3</sound_file_name>
+    <!-- * -->
+    <video_device>1</video_device>
+    <fbo_rotation>180</fbo_rotation>
     <!-- * -->
 	<point_read_multiplier>1.0</point_read_multiplier>
     <translate_x>0.0</translate_x>
