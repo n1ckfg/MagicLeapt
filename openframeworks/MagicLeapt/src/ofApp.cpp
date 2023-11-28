@@ -253,12 +253,17 @@ void ofApp::draw() {
         ofNoFill();
         
         for (int j=0; j<currentStroke + 1; j++) {
-            ofBeginShape();
+            ofMesh mesh;
+            mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+            
+            float widthSmooth = 1;
+            float angleSmooth;
             
             int kLimit = (int) latk.layers[0].frames[currentFrame].strokes[j].points.size();
             if (j == currentStroke) kLimit = currentPoint + 1;
             
-            for (int k=0; k<kLimit; k++) {
+            /*
+             for (int k=0; k<kLimit; k++) {
                 ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
                 if (doSpread) {
                     ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
@@ -266,7 +271,38 @@ void ofApp::draw() {
                     ofVertex(co.x, co.y, 0);
                 }
             }
-            ofEndShape();
+             */
+            for (int k=0; k<kLimit; k++) {
+                int me_m_one = k - 1;
+                int me_p_one = k + 1;
+                if (me_m_one < 0) me_m_one = 0;
+                if (me_p_one == kLimit) me_p_one = kLimit - 1;
+                
+                ofPoint diff = latk.layers[0].frames[currentFrame].strokes[j].points[me_p_one] - latk.layers[0].frames[currentFrame].strokes[j].points[me_m_one];
+                float angle = atan2(diff.y, diff.x);
+                
+                if (k == 0) {
+                    angleSmooth = angle;
+                } else {
+                    angleSmooth = ofLerpDegrees(angleSmooth, angle, 1.0);
+                }
+                
+                float dist = diff.length();
+                
+                float w = ofMap(dist, 0, 20, lineWidth, 2, true); //40, 2, true);
+                
+                widthSmooth = 0.2f * widthSmooth + 0.1f * w;
+                
+                ofPoint offset;
+                offset.x = cos(angleSmooth + PI/2) * widthSmooth;
+                offset.y = sin(angleSmooth + PI/2) * widthSmooth;
+                
+                mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] + offset);
+                mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] - offset);
+            }
+            //ofSetColor(col, alphaVal);
+            ofSetColor(255, alphaVal);
+            mesh.draw();
         }
         ofPopMatrix();
     }

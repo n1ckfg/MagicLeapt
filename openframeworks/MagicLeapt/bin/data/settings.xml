@@ -16,13 +16,13 @@
     <translate_y>-100.0</translate_y>
     <random_position_spread>10.0</random_position_spread>
     <!-- * -->
-    <line_width>10</line_width>
-    <alpha_val>127</alpha_val>
+    <line_width>2</line_width>
+    <alpha_val>255</alpha_val>
     <!-- * -->
     <contour_slices>10</contour_slices>
     <contour_min_radius>1.0</contour_min_radius>
     <contour_max_radius>100.0</contour_max_radius>
-    <contour_line_width>20</contour_line_width>
+    <contour_line_width>10</contour_line_width>
     <draw_wireframe>1</draw_wireframe>
     <!-- * -->
     <contour_alpha>63</contour_alpha>
