@@ -113,9 +113,9 @@ void ofApp::setup() {
     translateYorig = settings.getValue("settings:translate_y", -115.0);
     randomPositionSpread = settings.getValue("settings:random_position_spread", 10.0);
        
-    contourThreshold = 2.0;
-    contourMinAreaRadius = 1.0;
-    contourMaxAreaRadius = 250.0;
+    contourThreshold = settings.getValue("settings:contour_threshold", 127.0);
+    contourMinAreaRadius = settings.getValue("settings:contour_min_radius", 10.0);
+    contourMaxAreaRadius = settings.getValue("settings:contour_max_radius", 150.0);
     contourFinder.setMinAreaRadius(contourMinAreaRadius);
     contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
 }
