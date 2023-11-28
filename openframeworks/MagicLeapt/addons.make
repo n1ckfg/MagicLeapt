@@ -1,3 +1,4 @@
+ofxCvPiCam
 ofxOpenCv
 ofxCv
 ofxLatk
