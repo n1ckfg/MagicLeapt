@@ -4,19 +4,21 @@
 //========================================================================
 int main() {
     
-    int w = 1280;
-    int h = 720;
+    //int w = 1280;
+    //int h = 720;
 
     // setup the GL context
 #ifdef TARGET_OPENGLES
     ofGLESWindowSettings settings;
     settings.glesVersion = 2;
-    settings.setSize(w, h);
+    //settings.setSize(w, h);
+    settings.windowMode = OF_FULLSCREEN;
     ofCreateWindow(settings);
 #else
     ofGLFWWindowSettings settings;
     settings.numSamples = 0;
-    settings.setSize(w, h);
+    //settings.setSize(w, h);
+    settings.windowMode = OF_FULLSCREEN;
     ofCreateWindow(settings);
 #endif
 

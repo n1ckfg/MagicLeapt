@@ -64,6 +64,10 @@ void ofApp::setup() {
         diffTimesArray.push_back(newTimeDiff);
     }
     
+    camW = settings.getValue("settings:cam_width", 640);
+    camH = settings.getValue("settings:cam_height", 480);
+    camFps = settings.getValue("settings:cam_fps", 40); // RPi cam can do this
+
 #ifdef TARGET_RASPBERRY_PI
     camRotation = settings.getValue("settings:cam_rotation", 0);
     camSharpness = settings.getValue("settings:sharpness", 0);
@@ -74,7 +78,7 @@ void ofApp::setup() {
     camExposureCompensation = settings.getValue("settings:exposure_compensation", 0);
     camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
     
-    cam.setup(320, 240, 40, false); // color/gray;
+    cam.setup(camW, camH, camFps, false); // color/gray;
     
     cam.setRotation(camRotation);
     cam.setSharpness(camSharpness);
@@ -97,8 +101,8 @@ void ofApp::setup() {
     
     videoDevice = settings.getValue("settings:video_device", 0);
     vidGrabber.setDeviceID(videoDevice);
-    vidGrabber.setDesiredFrameRate(30);
-    vidGrabber.initGrabber(1280, 720);
+    vidGrabber.setDesiredFrameRate(camFps);
+    vidGrabber.initGrabber(camW, camH);
 #endif
     
     lineWidth = settings.getValue("settings:line_width", 10);

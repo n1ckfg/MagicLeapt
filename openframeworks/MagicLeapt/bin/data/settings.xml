@@ -7,6 +7,10 @@
     <video_device>1</video_device>
     <fbo_rotation>180</fbo_rotation>
     <!-- * -->
+    <cam_width>640</cam_width>
+    <cam_height>480</cam_height>
+    <cam_fps>40</cam_fps>
+    <!-- * -->
 	<point_read_multiplier>1.0</point_read_multiplier>
     <translate_x>0.0</translate_x>
     <translate_y>-100.0</translate_y>

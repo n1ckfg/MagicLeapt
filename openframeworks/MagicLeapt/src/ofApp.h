@@ -81,6 +81,7 @@ class ofApp : public ofBaseApp {
         bool playLatk = true;
         float fboRotation = 180;
     
+        int camW, camH, camFps;
 };
 
 
