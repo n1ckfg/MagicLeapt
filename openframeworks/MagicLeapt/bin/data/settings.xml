@@ -7,8 +7,8 @@
     <video_device>1</video_device>
     <fbo_rotation>180</fbo_rotation>
     <!-- * -->
-    <cam_width>640</cam_width>
-    <cam_height>480</cam_height>
+    <cam_width>320</cam_width>
+    <cam_height>240</cam_height>
     <cam_fps>40</cam_fps>
     <!-- * -->
 	<point_read_multiplier>1.0</point_read_multiplier>
@@ -21,11 +21,11 @@
     <!-- * -->
     <contour_slices>10</contour_slices>
     <contour_min_radius>1.0</contour_min_radius>
-    <contour_max_radius>250.0</contour_max_radius>
+    <contour_max_radius>100.0</contour_max_radius>
     <contour_line_width>20</contour_line_width>
     <draw_wireframe>1</draw_wireframe>
     <!-- * -->
-    <contour_alpha>17</contour_alpha>
+    <contour_alpha>63</contour_alpha>
     <cam_rotation>270</cam_rotation>
     <sharpness>50</sharpness>
 	<contrast>50</contrast>
