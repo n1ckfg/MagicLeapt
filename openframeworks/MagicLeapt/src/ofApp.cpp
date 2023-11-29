@@ -231,7 +231,11 @@ void ofApp::draw() {
                 }
                 
                 //ofSetColor(col, alphaVal);
-                ofSetColor(255, contourAlpha);
+                if (ofRandom(1.0) < 0.5) {
+                    ofSetColor(13, 127, 255, contourAlpha);
+                } else {
+                    ofSetColor(255, 127, 13, contourAlpha);
+                }
                 mesh.draw();
                 //if (drawWireframe) {
                     //ofSetColor(col);
@@ -245,7 +249,6 @@ void ofApp::draw() {
     
     // latk lines
     if (playLatk) {
-        ofSetColor(255, alphaVal);
         ofPushMatrix();
         ofSetLineWidth(lineWidth);
         ofScale(ofGetWidth() / 128.0, ofGetHeight() / -128.0);
@@ -300,8 +303,11 @@ void ofApp::draw() {
                 mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] + offset);
                 mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] - offset);
             }
-            //ofSetColor(col, alphaVal);
-            ofSetColor(255, alphaVal);
+            if (ofRandom(1.0) < 0.2) {
+                ofSetColor(13, 197, 255, alphaVal);
+            } else {
+                ofSetColor(255, 197, 13, alphaVal);
+            }
             mesh.draw();
         }
         ofPopMatrix();
