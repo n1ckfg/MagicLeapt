@@ -64,18 +64,19 @@ class ofApp : public ofBaseApp {
         ofVideoGrabber vidGrabber;
         int videoDevice = 0;
 #endif
-        
+        int decayAlpha = 2;
         int alphaVal = 127;
         int lineWidth = 10;
         float contourLineWidth;
         int contourAlpha = 127;
-        bool drawWireframe;
+        bool drawWireframe = false;
         ofxCv::ContourFinder contourFinder;
         float contourMinAreaRadius; // default 10
         float contourMaxAreaRadius; // default 150
         int contourSlices; // default 20
         ofxCv::TrackingColorMode trackingColorMode; // RGB, HSV, H, HS; default RGB
     
+        bool videoColor = true;
         bool playLatk = true;
         float fboRotation = 180;
     

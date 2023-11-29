@@ -9,6 +9,9 @@ void ofApp::setup() {
     
     fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
     
+    videoColor = (bool) settings.getValue("settings:video_color", 1);
+    drawWireframe = (bool) settings.getValue("settings:draw_wireframe", 0);
+    doSpread = (bool) settings.getValue("settings:do_spread", 0);
     playLatk = (bool) settings.getValue("settings:play_latk", 1);
     fboRotation = settings.getValue("settings:fbo_rotation", 180);
 
@@ -108,6 +111,7 @@ void ofApp::setup() {
     contourLineWidth = settings.getValue("settings:contour_line_width", 10);
     lineWidth = settings.getValue("settings:line_width", 10);
     alphaVal = settings.getValue("settings:alpha_val", 255);
+    decayAlpha = settings.getValue("settings:decay_alpha", 2);
     contourSlices = settings.getValue("settings:contour_slices", 10);
     
     contourAlpha = settings.getValue("settings:contour_alpha", 127);
@@ -160,31 +164,22 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
-    fbo.begin();
     ofBackground(0);
-
+    fbo.begin();
+    ofSetColor(0, decayAlpha);
+    ofDrawRectangle(0, 0, fbo.getWidth(), fbo.getHeight());
+    
     if (!frame.empty()) {
-        //threshold(frame, frameProcessed, thresholdValue, 255, 0);
-        //drawMat(frameProcessed, 0, 0, fbo.getWidth(), fbo.getHeight());
-        
         int contourCounter = 0;
-        //unsigned char * pixels = gray.getPixels().getData();
-        //int gw = gray.getWidth();
         
         for (int h=0; h<255; h += int(255/contourSlices)) {
             contourFinder.setThreshold(h);
             contourFinder.findContours(frame);
-            //contourFinder.draw();
             
             int n = contourFinder.size();
             for (int h = 0; h < n; h++) {
                 ofPolyline line = contourFinder.getPolyline(h);
                 vector<glm::vec3> cvPoints = line.getVertices();
-                
-                //int index = cvPoints.size() / 2;
-                //int x = int(cvPoints[index].x);
-                //int y = int(cvPoints[index].y);
-                //ofColor col = pixels[x + y * gw];
                 
                 ofMesh mesh;
                 mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
@@ -217,6 +212,11 @@ void ofApp::draw() {
                     ofPoint offset;
                     offset.x = cos(angleSmooth + PI/2) * widthSmooth;
                     offset.y = sin(angleSmooth + PI/2) * widthSmooth;
+                  
+                    if (doSpread) {
+                        offset.x += ofRandom(-spread, spread);
+                        offset.y += ofRandom(-spread, spread);
+                    }
                     
                     float frW = frame.size().width;
                     float fbW = fbo.getWidth();
@@ -230,17 +230,21 @@ void ofApp::draw() {
                     mesh.addVertex(cvPoints[i] - offset);
                 }
                 
-                //ofSetColor(col, alphaVal);
-                if (ofRandom(1.0) < 0.5) {
-                    ofSetColor(13, 127, 255, contourAlpha);
+                if (videoColor) {
+                    if (ofRandom(1.0) < 0.5) {
+                        ofSetColor(13, 127, 255, contourAlpha);
+                    } else {
+                        ofSetColor(255, 127, 13, contourAlpha);
+                    }
                 } else {
-                    ofSetColor(255, 127, 13, contourAlpha);
+                    ofSetColor(255, contourAlpha);
                 }
-                mesh.draw();
-                //if (drawWireframe) {
-                    //ofSetColor(col);
-                    //mesh.drawWireframe();
-                //}
+                
+                if (drawWireframe) {
+                    mesh.drawWireframe();
+                } else {
+                    mesh.draw();
+                }
                 
                 contourCounter++;
             }
@@ -264,17 +268,7 @@ void ofApp::draw() {
             
             int kLimit = (int) latk.layers[0].frames[currentFrame].strokes[j].points.size();
             if (j == currentStroke) kLimit = currentPoint + 1;
-            
-            /*
-             for (int k=0; k<kLimit; k++) {
-                ofVec3f co = latk.layers[0].frames[currentFrame].strokes[j].points[k];
-                if (doSpread) {
-                    ofVertex(co.x + ofRandom(-spread, spread), co.y + ofRandom(-spread, spread), 0);
-                } else {
-                    ofVertex(co.x, co.y, 0);
-                }
-            }
-             */
+
             for (int k=0; k<kLimit; k++) {
                 int me_m_one = k - 1;
                 int me_p_one = k + 1;
@@ -300,15 +294,30 @@ void ofApp::draw() {
                 offset.x = cos(angleSmooth + PI/2) * widthSmooth;
                 offset.y = sin(angleSmooth + PI/2) * widthSmooth;
                 
+                if (doSpread) {
+                    offset.x += ofRandom(-spread, spread);
+                    offset.y += ofRandom(-spread, spread);
+                }
+                
                 mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] + offset);
                 mesh.addVertex(latk.layers[0].frames[currentFrame].strokes[j].points[k] - offset);
             }
-            if (ofRandom(1.0) < 0.2) {
-                ofSetColor(13, 197, 255, alphaVal);
+            
+            if (videoColor) {
+                if (ofRandom(1.0) < 0.2) {
+                    ofSetColor(13, 197, 255, alphaVal);
+                } else {
+                    ofSetColor(255, 197, 13, alphaVal);
+                }
             } else {
-                ofSetColor(255, 197, 13, alphaVal);
+                ofSetColor(255, alphaVal);
             }
-            mesh.draw();
+
+            if (drawWireframe) {
+                mesh.drawWireframe();
+            } else {
+                mesh.draw();
+            }
         }
         ofPopMatrix();
     }
@@ -338,4 +347,6 @@ void ofApp::draw() {
             currentPoint = 0;
         }
     }
+    
+    spread += spreadDelta;
 }

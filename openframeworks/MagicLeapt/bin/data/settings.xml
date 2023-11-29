@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
+    <draw_wireframe>1</draw_wireframe>
+    <video_color>1</video_color>
+    <do_spread>1</do_spread>
     <play_latk>1</play_latk>
     <latk_file_name>sandia.json</latk_file_name>
     <sound_file_name>sound.mp3</sound_file_name>
-    <!-- * -->
-    <video_device>1</video_device>
     <fbo_rotation>180</fbo_rotation>
     <!-- * -->
+    <video_device>1</video_device>
     <cam_width>320</cam_width>
     <cam_height>240</cam_height>
     <cam_fps>40</cam_fps>
@@ -15,17 +17,16 @@
     <translate_x>0.0</translate_x>
     <translate_y>-100.0</translate_y>
     <random_position_spread>10.0</random_position_spread>
-    <!-- * -->
     <line_width>2</line_width>
     <alpha_val>255</alpha_val>
+    <decay_alpha>2</decay_alpha>
     <!-- * -->
     <contour_slices>10</contour_slices>
     <contour_min_radius>1.0</contour_min_radius>
     <contour_max_radius>100.0</contour_max_radius>
     <contour_line_width>10</contour_line_width>
-    <draw_wireframe>1</draw_wireframe>
-    <!-- * -->
     <contour_alpha>63</contour_alpha>
+    <!-- * -->
     <cam_rotation>270</cam_rotation>
     <sharpness>50</sharpness>
 	<contrast>50</contrast>
