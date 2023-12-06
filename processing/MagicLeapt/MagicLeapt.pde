@@ -5,7 +5,7 @@ import xyscope.*;   // import XYscope
 import latkProcessing.*;
 
 Latk latk; 
-PVector offset = new PVector(40, -100);
+PVector offset = new PVector(-60, -80);
 int skipPoints = 1;
 
 void setup() {
@@ -25,7 +25,7 @@ void setup() {
         
         for (int l=0; l<stroke.points.size(); l++) {
           PVector point = stroke.s.getVertex(l);
-          point.x = abs(point.x * width) + offset.x;
+          point.x = abs(point.z * width) + offset.x;
           point.y = (height - abs(point.y * height)) + offset.y;
           stroke.s.setVertex(l, point);
         }
