@@ -14,11 +14,6 @@ float pos = 0.0;
 
 float pointReadMultiplier = 1.0;
 
-float spreadOrig = 0.05;
-float spreadDelta = 0.001;
-float spread = spreadOrig;
-boolean doSpread = false;
-
 float[] startTimesArray = { 0.641, 5.986, 8.053, 11.758, 15.322, 19.241, 23.446, 26.225, 30.573, 33.637, 36.488, 38.982, 45.040, 49.886, 53.734, 57.226, 63.569 };
 float[] stopTimesArray = { 5.487, 7.340, 11.046, 14.538, 18.244, 22.876, 25.299, 29.646, 32.996, 36.060, 38.412, 44.403, 48.817, 52.451, 56.442, 62.357, 66.918 };
 float[] diffTimesArray = new float[startTimesArray.length];
@@ -55,7 +50,6 @@ void draw() {
     currentFrame++;
     currentStroke = 0;
     currentPoint = 0;
-    spread = spreadOrig;
     randomizePosition();
   }
   
@@ -63,14 +57,13 @@ void draw() {
     currentFrame = 0;
     currentStroke = 0;
     currentPoint = 0;
-    spread = spreadOrig;
     randomizePosition();
   }
 
   background(127);
   stroke(255);
-  strokeWeight(10);
-  fill(255);
+  strokeWeight(5);
+  noFill();
    
   xyScopeBegin();   
     
@@ -81,15 +74,12 @@ void draw() {
     int kLimit = (int) latk.layers.get(0).frames.get(currentFrame).strokes.get(j).points.size();
     if (j == currentStroke) kLimit = currentPoint + 1;
     
-    for (int k=0; k<kLimit; k++) {
-      if (doSpread) {
-        //offset.x += random(-spread, spread);
-        //offset.y += random(-spread, spread);
-      }
-      
-      PVector p = latk.layers.get(0).frames.get(currentFrame).strokes.get(j).points.get(k).co; //.add(offset);
-      xy.vertex(p.x, p.y);
-      vertex(p.x * 100.0, p.y * 100);      
+    for (int k=0; k<kLimit; k++) {      
+      PVector p = latk.layers.get(0).frames.get(currentFrame).strokes.get(j).points.get(k).co;
+      float x = p.x * width + offset.x;
+      float y = abs(height - (p.y * height)) + offset.y;
+      xy.vertex(x, y);
+      vertex(x, y);      
     }
        
     endShape();
@@ -112,8 +102,6 @@ void draw() {
     currentStroke++;
     currentPoint = 0;
   }
-    
-  spread += spreadDelta;  
-  
+      
   surface.setTitle(""+frameRate);
 }
