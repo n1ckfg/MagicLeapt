@@ -6,7 +6,7 @@ import latkProcessing.*;
 
 Latk latk; 
 PVector offset = new PVector(40, -100);
-int skipPoints = 4;
+int skipPoints = 1;
 
 void setup() {
   size(512, 512, P2D); 
@@ -35,7 +35,7 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(255);
   
   latk.run();
   
